@@ -29,15 +29,7 @@ if (!VERSION) {
 const ARTIFACTS_DIR = process.env.ARTIFACTS_DIR || join(ROOT, "artifacts");
 const DRY_RUN = process.argv.includes("--dry-run");
 const LOCAL_MODE = process.argv.includes("--local");
-// This fork publishes to ByteDance's internal registry (bnpm) under
-// @bytedance-dev. Fork releases use a "-cn.N" suffix and are the fork's
-// regular builds, so they go to the "latest" dist-tag unless overridden.
-const NPM_SCOPE = process.env.BIFROST_NPM_SCOPE || "@bytedance-dev";
-const NPM_REGISTRY = (process.env.BIFROST_NPM_REGISTRY || "https://bnpm.byted.org").replace(/\/+$/, "");
-const NPM_ACCESS = process.env.BIFROST_NPM_ACCESS || "restricted";
-const NPM_TAG =
-  process.env.BIFROST_NPM_TAG ||
-  (VERSION.includes("-") && !/-cn(\.|$)/.test(VERSION) ? "next" : "latest");
+const NPM_TAG = VERSION.includes("-") ? "next" : "latest";
 const PRINT_TAG = process.argv.includes("--print-tag");
 
 if (PRINT_TAG) {
@@ -105,7 +97,7 @@ function updateVersion(pkgJsonPath, version) {
 
   if (pkg.optionalDependencies) {
     for (const dep of Object.keys(pkg.optionalDependencies)) {
-      if (dep.startsWith(`${NPM_SCOPE}/`)) {
+      if (dep.startsWith("@bifrost-proxy/")) {
         pkg.optionalDependencies[dep] = version;
       }
     }
@@ -184,7 +176,7 @@ function sleep(ms) {
 }
 
 function npmPublishOnce(pkgDir) {
-  const args = ["publish", "--access", NPM_ACCESS, "--tag", NPM_TAG, "--registry", `${NPM_REGISTRY}/`];
+  const args = ["publish", "--access", "public", "--tag", NPM_TAG, "--registry", "https://registry.npmjs.org/"];
   if (DRY_RUN) args.push("--dry-run");
   if (OTP_ARG) args.push("--otp", OTP_ARG);
 
@@ -193,7 +185,7 @@ function npmPublishOnce(pkgDir) {
     env.npm_token = NPM_TOKEN_ARG;
     env.NODE_AUTH_TOKEN = NPM_TOKEN_ARG;
     const npmrcPath = join(pkgDir, ".npmrc");
-    writeFileSync(npmrcPath, `${NPM_REGISTRY.replace(/^https?:/, "")}/:_authToken=\${npm_token}\n`);
+    writeFileSync(npmrcPath, "//registry.npmjs.org/:_authToken=${npm_token}\n");
   }
 
   const logArgs = OTP_ARG ? args.filter((a) => a !== OTP_ARG) : args;
@@ -292,7 +284,7 @@ async function publishLocal() {
   console.log("  ✅ Copied root README.md into all platform packages");
 
   console.log("\n3️⃣  Publishing current platform package...\n");
-  console.log(`  📦 Publishing ${NPM_SCOPE}/${localPlatform.npmPkg}...`);
+  console.log(`  📦 Publishing @bifrost-proxy/${localPlatform.npmPkg}...`);
   await npmPublish(join(NPM_DIR, localPlatform.npmPkg));
 
   console.log("\n4️⃣  Publishing remaining platform packages (version bump only)...\n");
@@ -309,7 +301,7 @@ async function publishLocal() {
       console.log(`  ⏳ Waiting ${PUBLISH_INTERVAL_MS / 1000}s before next publish...`);
       await sleep(PUBLISH_INTERVAL_MS);
     }
-    console.log(`  📦 Publishing ${NPM_SCOPE}/${p.npmPkg} (stub)...`);
+    console.log(`  📦 Publishing @bifrost-proxy/${p.npmPkg} (stub)...`);
     await npmPublish(join(NPM_DIR, p.npmPkg));
   }
 
@@ -320,11 +312,11 @@ async function publishLocal() {
     console.log(`  ⏳ Waiting ${PUBLISH_INTERVAL_MS / 1000}s for platform packages to propagate...`);
     await sleep(PUBLISH_INTERVAL_MS);
   }
-  console.log(`  📦 Publishing ${NPM_SCOPE}/bifrost...`);
+  console.log(`  📦 Publishing @bifrost-proxy/bifrost...`);
   await npmPublish(join(NPM_DIR, "bifrost"));
 
   console.log(`\n✅ All packages published successfully! (v${VERSION})\n`);
-  console.log(`Test with: npx ${NPM_SCOPE}/bifrost@${VERSION} --version\n`);
+  console.log(`Test with: npx @bifrost-proxy/bifrost@${VERSION} --version\n`);
 }
 
 async function publishCI() {
@@ -386,7 +378,7 @@ async function publishCI() {
   for (let i = 0; i < PLATFORMS.length; i++) {
     const p = PLATFORMS[i];
     const pkgDir = join(NPM_DIR, p.npmPkg);
-    console.log(`\n  📦 Publishing ${NPM_SCOPE}/${p.npmPkg}...`);
+    console.log(`\n  📦 Publishing @bifrost-proxy/${p.npmPkg}...`);
     try {
       await npmPublish(pkgDir);
       if (i < PLATFORMS.length - 1 && !DRY_RUN) {
@@ -394,7 +386,7 @@ async function publishCI() {
         await sleep(PUBLISH_INTERVAL_MS);
       }
     } catch (err) {
-      console.error(`  ❌ Failed to publish ${NPM_SCOPE}/${p.npmPkg}: ${err.message}`);
+      console.error(`  ❌ Failed to publish @bifrost-proxy/${p.npmPkg}: ${err.message}`);
       failedPlatforms.push(p.npmPkg);
     }
   }
@@ -413,7 +405,7 @@ async function publishCI() {
     await sleep(PUBLISH_INTERVAL_MS);
   }
   const mainPkgDir = join(NPM_DIR, "bifrost");
-  console.log(`  📦 Publishing ${NPM_SCOPE}/bifrost...`);
+  console.log(`  📦 Publishing @bifrost-proxy/bifrost...`);
   await npmPublish(mainPkgDir);
 
   console.log(`\n✅ All packages published successfully! (v${VERSION})\n`);

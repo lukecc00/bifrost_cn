@@ -552,7 +552,7 @@ pub(super) fn upgrade_via_homebrew(target_version: &str) -> Result<(), BifrostEr
                         );
                     println!(
                             "  {}",
-                            "curl -fsSL https://raw.githubusercontent.com/bifrost-proxy/bifrost/main/install-binary.sh | bash"
+                            "curl -fsSL https://raw.githubusercontent.com/lukecc00/bifrost_cn/main/install-binary.sh | bash"
                                 .bright_cyan()
                         );
                     return Ok(());

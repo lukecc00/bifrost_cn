@@ -1,13 +1,13 @@
 {
-  "name": "@bytedance-dev/bifrost",
+  "name": "@bifrost-proxy/bifrost",
   "version": "0.0.0",
   "description": "High-performance HTTP/HTTPS/SOCKS5 proxy server written in Rust",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lukecc00/bifrost_cn"
+    "url": "https://github.com/bifrost-proxy/bifrost"
   },
-  "homepage": "https://github.com/lukecc00/bifrost_cn",
+  "homepage": "https://github.com/bifrost-proxy/bifrost",
   "keywords": [
     "proxy",
     "bifrost",
@@ -42,18 +42,14 @@
     "README.md"
   ],
   "optionalDependencies": {
-    "@bytedance-dev/bifrost-linux-x64": "0.0.0",
-    "@bytedance-dev/bifrost-linux-arm64": "0.0.0",
-    "@bytedance-dev/bifrost-linux-arm": "0.0.0",
-    "@bytedance-dev/bifrost-linux-x64-musl": "0.0.0",
-    "@bytedance-dev/bifrost-linux-arm64-musl": "0.0.0",
-    "@bytedance-dev/bifrost-darwin-x64": "0.0.0",
-    "@bytedance-dev/bifrost-darwin-arm64": "0.0.0",
-    "@bytedance-dev/bifrost-win32-x64": "0.0.0",
-    "@bytedance-dev/bifrost-win32-arm64": "0.0.0"
-  },
-  "publishConfig": {
-    "registry": "https://bnpm.byted.org",
-    "access": "restricted"
+    "@bifrost-proxy/bifrost-linux-x64": "0.0.0",
+    "@bifrost-proxy/bifrost-linux-arm64": "0.0.0",
+    "@bifrost-proxy/bifrost-linux-arm": "0.0.0",
+    "@bifrost-proxy/bifrost-linux-x64-musl": "0.0.0",
+    "@bifrost-proxy/bifrost-linux-arm64-musl": "0.0.0",
+    "@bifrost-proxy/bifrost-darwin-x64": "0.0.0",
+    "@bifrost-proxy/bifrost-darwin-arm64": "0.0.0",
+    "@bifrost-proxy/bifrost-win32-x64": "0.0.0",
+    "@bifrost-proxy/bifrost-win32-arm64": "0.0.0"
   }
 }

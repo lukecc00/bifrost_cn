@@ -60,9 +60,6 @@ $installer = irm https://raw.githubusercontent.com/bifrost-proxy/bifrost/main/in
 npm i -g @bifrost-proxy/bifrost
 ```
 
-> 中文版 fork（`lukecc00/bifrost_cn`，管理端默认简体中文）通过字节内部 bnpm 分发：
-> `npm i -g --registry=https://bnpm.byted.org @bytedance-dev/bifrost`。发版流程见 [`design/bnpm-distribution.md`](design/bnpm-distribution.md)。
-
 更多安装方法：[`docs/getting-started.md`](docs/getting-started.md)
 
 检查代理：

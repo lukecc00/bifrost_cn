@@ -2,11 +2,7 @@ use super::*;
 
 const NODE_INSTALL_SOURCE_ENV: &str = "BIFROST_CLI_INSTALL_SOURCE";
 const SCRIPT_INSTALL_SOURCE_MARKER_SUFFIX: &str = ".install-source";
-// This fork is distributed through ByteDance's internal npm registry (bnpm)
-// as @bytedance-dev/bifrost, so npm/pnpm upgrades must stay on that package
-// and registry instead of switching back to upstream @bytedance-dev/bifrost.
-const NODE_PACKAGE_NAME: &str = "@bytedance-dev/bifrost";
-const NODE_PACKAGE_REGISTRY: &str = "https://bnpm.byted.org";
+const NODE_PACKAGE_NAME: &str = "@bifrost-proxy/bifrost";
 const NODE_PACKAGE_MANAGER_TIMEOUT_SECS: u64 = 600;
 const NODE_PACKAGE_METADATA_TIMEOUT_SECS: u64 = 60;
 
@@ -136,10 +132,10 @@ fn is_homebrew_path(path: &str) -> bool {
 }
 
 fn is_node_distribution_path(path: &str) -> bool {
-    let package_scope = "/node_modules/@bytedance-dev/";
+    let package_scope = "/node_modules/@bifrost-proxy/";
     path.contains(package_scope)
         && (path.contains("/bifrost-")
-            || path.contains("/bifrost/downloaded-bytedance-dev-bifrost-"))
+            || path.contains("/bifrost/downloaded-bifrost-proxy-bifrost-"))
 }
 
 fn looks_like_pnpm_path(path: &str) -> bool {
@@ -207,15 +203,9 @@ fn node_package_manager_upgrade_args(
             "--global".to_string(),
             "--no-audit".to_string(),
             "--progress=false".to_string(),
-            format!("--registry={NODE_PACKAGE_REGISTRY}"),
             package,
         ],
-        InstallMethod::Pnpm => vec![
-            "add".to_string(),
-            "--global".to_string(),
-            format!("--registry={NODE_PACKAGE_REGISTRY}"),
-            package,
-        ],
+        InstallMethod::Pnpm => vec!["add".to_string(), "--global".to_string(), package],
         _ => Vec::new(),
     };
     Ok(args)
@@ -302,7 +292,7 @@ fn resolve_node_managed_binary(method: &InstallMethod) -> Result<PathBuf, Bifros
 
     let resolver = concat!(
         "const p=require('path');",
-        "const e=p.join(process.argv[1],'@bytedance-dev','bifrost','lib','index.js');",
+        "const e=p.join(process.argv[1],'@bifrost-proxy','bifrost','lib','index.js');",
         "process.stdout.write(require(e).getBinaryPath());"
     );
     let binary_output = command_output_with_timeout(
@@ -363,7 +353,7 @@ mod tests {
         assert_eq!(
             detect_install_method_from(
                 Some(Path::new(
-                    "/usr/local/lib/node_modules/@bytedance-dev/bifrost-darwin-arm64/bin/bifrost"
+                    "/usr/local/lib/node_modules/@bifrost-proxy/bifrost-darwin-arm64/bin/bifrost"
                 )),
                 Some("npm"),
                 None
@@ -373,7 +363,7 @@ mod tests {
         assert_eq!(
             detect_install_method_from(
                 Some(Path::new(
-                    "/opt/homebrew/lib/node_modules/@bytedance-dev/bifrost-darwin-arm64/bin/bifrost"
+                    "/opt/homebrew/lib/node_modules/@bifrost-proxy/bifrost-darwin-arm64/bin/bifrost"
                 )),
                 Some("npm"),
                 None
@@ -383,7 +373,7 @@ mod tests {
         assert_eq!(
             detect_install_method_from(
                 Some(Path::new(
-                    "/usr/local/lib/node_modules/@bytedance-dev/bifrost/downloaded-bytedance-dev-bifrost-linux-x64-bifrost"
+                    "/usr/local/lib/node_modules/@bifrost-proxy/bifrost/downloaded-bifrost-proxy-bifrost-linux-x64-bifrost"
                 )),
                 None,
                 None
@@ -393,7 +383,7 @@ mod tests {
         assert_eq!(
             detect_install_method_from(
                 Some(Path::new(
-                    "/Users/test/Library/pnpm/global/5/.pnpm/@bytedance-dev+bifrost-darwin-arm64@1.2.3/node_modules/@bytedance-dev/bifrost-darwin-arm64/bin/bifrost"
+                    "/Users/test/Library/pnpm/global/5/.pnpm/@bifrost-proxy+bifrost-darwin-arm64@1.2.3/node_modules/@bifrost-proxy/bifrost-darwin-arm64/bin/bifrost"
                 )),
                 None,
                 None
@@ -401,9 +391,9 @@ mod tests {
             InstallMethod::Pnpm
         );
         for path in [
-            "/tmp/pnpm/global/node_modules/@bytedance-dev/bifrost-linux-x64/bin/bifrost",
-            "/Users/test/Library/pnpm/node_modules/@bytedance-dev/bifrost-darwin-arm64/bin/bifrost",
-            "C:/Users/test/AppData/Local/pnpm/node_modules/@bytedance-dev/bifrost-win32-x64/bin/bifrost.exe",
+            "/tmp/pnpm/global/node_modules/@bifrost-proxy/bifrost-linux-x64/bin/bifrost",
+            "/Users/test/Library/pnpm/node_modules/@bifrost-proxy/bifrost-darwin-arm64/bin/bifrost",
+            "C:/Users/test/AppData/Local/pnpm/node_modules/@bifrost-proxy/bifrost-win32-x64/bin/bifrost.exe",
         ] {
             assert_eq!(
                 detect_install_method_from(Some(Path::new(path)), None, None),
@@ -467,18 +457,12 @@ mod tests {
                 "--global",
                 "--no-audit",
                 "--progress=false",
-                "--registry=https://bnpm.byted.org",
-                "@bytedance-dev/bifrost@1.2.3"
+                "@bifrost-proxy/bifrost@1.2.3"
             ]
         );
         assert_eq!(
             node_package_manager_upgrade_args(&InstallMethod::Pnpm, "1.2.3").unwrap(),
-            [
-                "add",
-                "--global",
-                "--registry=https://bnpm.byted.org",
-                "@bytedance-dev/bifrost@1.2.3"
-            ]
+            ["add", "--global", "@bifrost-proxy/bifrost@1.2.3"]
         );
         assert!(
             node_package_manager_upgrade_args(&InstallMethod::Npm, "1.2.3&whoami")
@@ -523,7 +507,7 @@ mod tests {
 
         let temp = tempfile::tempdir().expect("tempdir");
         let root = temp.path().join("global/node_modules");
-        let binary = root.join("@bytedance-dev/bifrost-platform/bin/bifrost");
+        let binary = root.join("@bifrost-proxy/bifrost-platform/bin/bifrost");
         fs::create_dir_all(binary.parent().expect("binary parent")).expect("create binary dir");
         fs::write(&binary, "#!/bin/sh\nexit 0\n").expect("write binary");
         fs::set_permissions(&binary, fs::Permissions::from_mode(0o755)).expect("chmod binary");
@@ -558,7 +542,7 @@ mod tests {
         upgrade_via_node_package_manager(&InstallMethod::Npm, "v1.2.3").expect("fake npm upgrade");
         assert_eq!(
             fs::read_to_string(&command_log).expect("read command log"),
-            "install --global --no-audit --progress=false --registry=https://bnpm.byted.org @bytedance-dev/bifrost@1.2.3\n"
+            "install --global --no-audit --progress=false @bifrost-proxy/bifrost@1.2.3\n"
         );
 
         fs::write(&npm, "#!/bin/sh\necho package-manager-failed >&2\nexit 9\n")
