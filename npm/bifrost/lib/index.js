@@ -31,7 +31,7 @@ function getBinaryPath() {
 
   throw new Error(
     `The platform-specific package ${packageName} is not installed. ` +
-      `Please reinstall @bytedance-dev/bifrost to fix this.`
+      `Please reinstall @bifrost-proxy/bifrost to fix this.`
   );
 }
 

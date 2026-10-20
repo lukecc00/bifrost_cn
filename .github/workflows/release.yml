@@ -54,7 +54,7 @@ jobs:
           if [[ "${{ github.event_name }}" == "push" ]]; then
             TAG="${GITHUB_REF#refs/tags/}"
             VERSION="${TAG#v}"
-            IS_PRERELEASE=$([[ "$TAG" =~ (alpha|beta|rc|cn) ]] && echo "true" || echo "false")
+            IS_PRERELEASE=$([[ "$TAG" =~ (alpha|beta|rc) ]] && echo "true" || echo "false")
           else
             LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
             LATEST_VERSION="${LATEST_TAG#v}"

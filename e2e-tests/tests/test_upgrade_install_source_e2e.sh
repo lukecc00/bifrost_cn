@@ -32,7 +32,7 @@ IFS=. read -r major minor patch <<< "${CURRENT_VERSION%%-*}"
 TARGET_VERSION="$major.$minor.$((patch + 1))"
 FAKE_BIN="$TEST_ROOT/bin"
 FAKE_GLOBAL_ROOT="$TEST_ROOT/global/node_modules"
-FAKE_NEW_BINARY="$FAKE_GLOBAL_ROOT/@bytedance-dev/bifrost-platform/bin/bifrost"
+FAKE_NEW_BINARY="$FAKE_GLOBAL_ROOT/@bifrost-proxy/bifrost-platform/bin/bifrost"
 FAKE_PM_LOG="$TEST_ROOT/package-manager.log"
 mkdir -p "$FAKE_BIN" "$(dirname "$FAKE_NEW_BINARY")" "$TEST_ROOT/no-app"
 
@@ -100,7 +100,7 @@ assert_update_alias_help() {
 run_source_case() {
     local manager="$1"
     local command="$2"
-    local install_binary="$TEST_ROOT/$manager/node_modules/@bytedance-dev/bifrost-darwin-arm64/bin/bifrost"
+    local install_binary="$TEST_ROOT/$manager/node_modules/@bifrost-proxy/bifrost-darwin-arm64/bin/bifrost"
     local data_dir="$TEST_ROOT/data-$manager"
     local output status expected_command
     mkdir -p "$(dirname "$install_binary")" "$data_dir"
@@ -123,9 +123,9 @@ run_source_case() {
     set -e
 
     if [[ "$manager" = "npm" ]]; then
-        expected_command="npm install --global --no-audit --progress=false @bytedance-dev/bifrost@$TARGET_VERSION"
+        expected_command="npm install --global --no-audit --progress=false @bifrost-proxy/bifrost@$TARGET_VERSION"
     else
-        expected_command="pnpm add --global @bytedance-dev/bifrost@$TARGET_VERSION"
+        expected_command="pnpm add --global @bifrost-proxy/bifrost@$TARGET_VERSION"
     fi
     if [[ $status -ne 0 \
         || "$output" != *"Install method: $manager"* \
@@ -158,7 +158,7 @@ esac
 if [[ -n "$LOCAL_TARGET" ]]; then
     LOCAL_ASSETS_DIR="$TEST_ROOT/local-assets"
     LOCAL_ARCHIVE_ROOT="$TEST_ROOT/local-archive/bifrost-v$TARGET_VERSION-$LOCAL_TARGET"
-    LOCAL_INSTALL_BINARY="$TEST_ROOT/npm-local/node_modules/@bytedance-dev/bifrost-$LOCAL_TARGET/bin/bifrost"
+    LOCAL_INSTALL_BINARY="$TEST_ROOT/npm-local/node_modules/@bifrost-proxy/bifrost-$LOCAL_TARGET/bin/bifrost"
     mkdir -p "$LOCAL_ASSETS_DIR" "$LOCAL_ARCHIVE_ROOT" "$(dirname "$LOCAL_INSTALL_BINARY")" "$TEST_ROOT/data-local"
     cp "$BIFROST_BIN" "$LOCAL_INSTALL_BINARY"
     chmod +x "$LOCAL_INSTALL_BINARY"
@@ -191,7 +191,7 @@ if [[ -n "$LOCAL_TARGET" ]]; then
     echo "PASS local assets fail closed before contacting npm or overwriting its package tree"
 fi
 
-FAIL_INSTALL_BINARY="$TEST_ROOT/npm-failure/node_modules/@bytedance-dev/bifrost-darwin-arm64/bin/bifrost"
+FAIL_INSTALL_BINARY="$TEST_ROOT/npm-failure/node_modules/@bifrost-proxy/bifrost-darwin-arm64/bin/bifrost"
 mkdir -p "$(dirname "$FAIL_INSTALL_BINARY")" "$TEST_ROOT/data-failure"
 cp "$BIFROST_BIN" "$FAIL_INSTALL_BINARY"
 chmod +x "$FAIL_INSTALL_BINARY"

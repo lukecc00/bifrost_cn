@@ -9,15 +9,15 @@ const { getPlatformKey } = require("./lib/platform.js");
 const packageJSON = require(path.join(__dirname, "package.json"));
 
 const PLATFORM_MAP = {
-  "linux-x64-glibc": { pkg: "@bytedance-dev/bifrost-linux-x64", binary: "bifrost" },
-  "linux-x64-musl": { pkg: "@bytedance-dev/bifrost-linux-x64-musl", binary: "bifrost" },
-  "linux-arm64-glibc": { pkg: "@bytedance-dev/bifrost-linux-arm64", binary: "bifrost" },
-  "linux-arm64-musl": { pkg: "@bytedance-dev/bifrost-linux-arm64-musl", binary: "bifrost" },
-  "linux-arm-glibc": { pkg: "@bytedance-dev/bifrost-linux-arm", binary: "bifrost" },
-  "darwin-x64": { pkg: "@bytedance-dev/bifrost-darwin-x64", binary: "bifrost" },
-  "darwin-arm64": { pkg: "@bytedance-dev/bifrost-darwin-arm64", binary: "bifrost" },
-  "win32-x64": { pkg: "@bytedance-dev/bifrost-win32-x64", binary: "bifrost.exe" },
-  "win32-arm64": { pkg: "@bytedance-dev/bifrost-win32-arm64", binary: "bifrost.exe" },
+  "linux-x64-glibc": { pkg: "@bifrost-proxy/bifrost-linux-x64", binary: "bifrost" },
+  "linux-x64-musl": { pkg: "@bifrost-proxy/bifrost-linux-x64-musl", binary: "bifrost" },
+  "linux-arm64-glibc": { pkg: "@bifrost-proxy/bifrost-linux-arm64", binary: "bifrost" },
+  "linux-arm64-musl": { pkg: "@bifrost-proxy/bifrost-linux-arm64-musl", binary: "bifrost" },
+  "linux-arm-glibc": { pkg: "@bifrost-proxy/bifrost-linux-arm", binary: "bifrost" },
+  "darwin-x64": { pkg: "@bifrost-proxy/bifrost-darwin-x64", binary: "bifrost" },
+  "darwin-arm64": { pkg: "@bifrost-proxy/bifrost-darwin-arm64", binary: "bifrost" },
+  "win32-x64": { pkg: "@bifrost-proxy/bifrost-win32-x64", binary: "bifrost.exe" },
+  "win32-arm64": { pkg: "@bifrost-proxy/bifrost-win32-arm64", binary: "bifrost.exe" },
 };
 
 function getPlatformInfo() {
@@ -106,8 +106,8 @@ function removeRecursive(dir) {
 }
 
 async function downloadDirectlyFromNPM(pkg, subpath, binPath) {
-  const tarballName = pkg.replace("@bytedance-dev/", "");
-  const url = `https://bnpm.byted.org/${pkg}/-/${tarballName}-${packageJSON.version}.tgz`;
+  const tarballName = pkg.replace("@bifrost-proxy/", "");
+  const url = `https://registry.npmjs.org/${pkg}/-/${tarballName}-${packageJSON.version}.tgz`;
   console.error(`[bifrost] Trying to download ${JSON.stringify(url)}`);
   try {
     const bytes = extractFileFromTarGzip(await fetch(url), subpath);

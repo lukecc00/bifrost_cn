@@ -175,6 +175,10 @@ fn canonical_release_version(version: &str) -> String {
     normalized.to_string()
 }
 
+/// lukecc00/bifrost_cn publishes its regular builds as `<upstream>-cn.<N>`
+/// (e.g. `0.0.200-cn.1`). They are the fork's stable channel, not prereleases.
+const FORK_STABLE_LABEL: &str = "cn";
+
 pub fn release_channel(version: &str) -> ReleaseChannel {
     let canonical = canonical_release_version(version);
     let version = canonical.as_str();
@@ -186,6 +190,9 @@ pub fn release_channel(version: &str) -> ReleaseChannel {
         .find(|ch: char| !ch.is_ascii_alphabetic())
         .unwrap_or(first.len());
     let label = first[..label_end].to_ascii_lowercase();
+    if label == FORK_STABLE_LABEL {
+        return ReleaseChannel::Stable;
+    }
     if label.is_empty() {
         ReleaseChannel::Prerelease(prerelease.to_ascii_lowercase())
     } else {
@@ -210,9 +217,9 @@ fn release_version_for_channel(
     }
     let version = bifrost_version_from_release_tag(&release.tag_name)?;
     match channel {
-        ReleaseChannel::Stable => {
-            (!release.prerelease && !version.contains('-')).then_some(version)
-        }
+        ReleaseChannel::Stable => (!release.prerelease
+            && release_channel(&version) == ReleaseChannel::Stable)
+            .then_some(version),
         ReleaseChannel::Prerelease(_) => {
             (release.prerelease && release_channel(&version) == *channel).then_some(version)
         }
@@ -1563,6 +1570,17 @@ mod tests {
         };
 
         assert_eq!(release_channel("0.0.181"), ReleaseChannel::Stable);
+        assert_eq!(release_channel("0.0.200-cn.1"), ReleaseChannel::Stable);
+        assert!(same_release_channel("0.0.200-cn.1", "0.0.201-cn.1"));
+        assert_eq!(
+            pick_latest_bifrost_release(vec![
+                release("v0.0.200-cn.1", false, false),
+                release("v0.0.200-cn.2", false, false),
+                release("v0.0.201-alpha.1", false, true),
+            ])
+            .map(|release| release.tag_name),
+            Some("v0.0.200-cn.2".to_string())
+        );
         assert_eq!(
             release_channel("v0.0.181-alpha.1"),
             ReleaseChannel::Prerelease("alpha".to_string())

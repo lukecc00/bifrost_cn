@@ -954,7 +954,7 @@ fn download_and_install(
         for archive_ext in release_archive_ext_candidates() {
             let archive_name = format!("bifrost-v{}-{}.{}", version, target, archive_ext);
             let archive_github_path = format!(
-                "bifrost-proxy/bifrost/releases/download/{}/{}",
+                "lukecc00/bifrost_cn/releases/download/{}/{}",
                 release_tag, archive_name
             );
             let archive_path = temp_dir.path().join(&archive_name);
@@ -1166,7 +1166,7 @@ fn upgrade_manual(
             {
                 restore_binary_backup_best_effort(target_path);
                 return Err(BifrostError::Config(
-                    "Fallback musl binary also failed to run. Try installing manually with:\n  curl -fsSL https://raw.githubusercontent.com/bifrost-proxy/bifrost/main/install-binary.sh | bash".to_string(),
+                    "Fallback musl binary also failed to run. Try installing manually with:\n  curl -fsSL https://raw.githubusercontent.com/lukecc00/bifrost_cn/main/install-binary.sh | bash".to_string(),
                 ));
             }
 
@@ -1179,7 +1179,7 @@ fn upgrade_manual(
         } else {
             restore_binary_backup_best_effort(target_path);
             return Err(BifrostError::Config(
-                "Installed binary failed verification (`bifrost --version` returned non-zero). Try installing manually with:\n  curl -fsSL https://raw.githubusercontent.com/bifrost-proxy/bifrost/main/install-binary.sh | bash".to_string(),
+                "Installed binary failed verification (`bifrost --version` returned non-zero). Try installing manually with:\n  curl -fsSL https://raw.githubusercontent.com/lukecc00/bifrost_cn/main/install-binary.sh | bash".to_string(),
             ));
         }
     } else {
@@ -1317,7 +1317,7 @@ fn handle_upgrade_inner(
                     println!("{}", "  You can upgrade manually by running:".dimmed());
                     println!(
                         "  {}",
-                        "curl -fsSL https://raw.githubusercontent.com/bifrost-proxy/bifrost/main/install-binary.sh | bash"
+                        "curl -fsSL https://raw.githubusercontent.com/lukecc00/bifrost_cn/main/install-binary.sh | bash"
                             .bright_cyan()
                     );
                     println!();
@@ -1330,7 +1330,7 @@ fn handle_upgrade_inner(
                     );
                     println!(
                         "{}",
-                        "    • Try: curl -sI -o /dev/null -w '%{url_effective}' -L https://github.com/bifrost-proxy/bifrost/releases/latest"
+                        "    • Try: curl -sI -o /dev/null -w '%{url_effective}' -L https://github.com/lukecc00/bifrost_cn/releases/latest"
                             .dimmed()
                     );
                     println!(
@@ -1400,7 +1400,7 @@ fn handle_upgrade_inner(
             println!("Please upgrade manually:");
             println!(
                 "  {}",
-                "curl -fsSL https://raw.githubusercontent.com/bifrost-proxy/bifrost/main/install-binary.sh | bash"
+                "curl -fsSL https://raw.githubusercontent.com/lukecc00/bifrost_cn/main/install-binary.sh | bash"
                     .bright_cyan()
             );
             println!(

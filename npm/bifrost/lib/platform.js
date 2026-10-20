@@ -4,15 +4,15 @@ const child_process = require("child_process");
 const MIN_GLIBC_VERSION = "2.39";
 
 const PLATFORM_MAP = {
-  "linux-x64-glibc": "@bytedance-dev/bifrost-linux-x64",
-  "linux-x64-musl": "@bytedance-dev/bifrost-linux-x64-musl",
-  "linux-arm64-glibc": "@bytedance-dev/bifrost-linux-arm64",
-  "linux-arm64-musl": "@bytedance-dev/bifrost-linux-arm64-musl",
-  "linux-arm-glibc": "@bytedance-dev/bifrost-linux-arm",
-  "darwin-x64": "@bytedance-dev/bifrost-darwin-x64",
-  "darwin-arm64": "@bytedance-dev/bifrost-darwin-arm64",
-  "win32-x64": "@bytedance-dev/bifrost-win32-x64",
-  "win32-arm64": "@bytedance-dev/bifrost-win32-arm64",
+  "linux-x64-glibc": "@bifrost-proxy/bifrost-linux-x64",
+  "linux-x64-musl": "@bifrost-proxy/bifrost-linux-x64-musl",
+  "linux-arm64-glibc": "@bifrost-proxy/bifrost-linux-arm64",
+  "linux-arm64-musl": "@bifrost-proxy/bifrost-linux-arm64-musl",
+  "linux-arm-glibc": "@bifrost-proxy/bifrost-linux-arm",
+  "darwin-x64": "@bifrost-proxy/bifrost-darwin-x64",
+  "darwin-arm64": "@bifrost-proxy/bifrost-darwin-arm64",
+  "win32-x64": "@bifrost-proxy/bifrost-win32-x64",
+  "win32-arm64": "@bifrost-proxy/bifrost-win32-arm64",
 };
 
 function parseVersion(version) {
