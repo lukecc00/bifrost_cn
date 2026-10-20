@@ -200,12 +200,24 @@ pub fn release_channel(version: &str) -> ReleaseChannel {
     }
 }
 
+/// Whether `version` is a lukecc00/bifrost_cn build (`<upstream>-cn.<N>`).
+pub fn is_fork_build(version: &str) -> bool {
+    let canonical = canonical_release_version(version);
+    canonical
+        .split_once('-')
+        .and_then(|(_, prerelease)| prerelease.split(['.', '-']).next())
+        .is_some_and(|label| label.eq_ignore_ascii_case(FORK_STABLE_LABEL))
+}
+
 pub fn same_release_channel(current: &str, candidate: &str) -> bool {
     let current = canonical_release_version(current);
     let candidate = canonical_release_version(candidate);
     semver::Version::parse(&current).is_ok()
         && semver::Version::parse(&candidate).is_ok()
         && release_channel(&current) == release_channel(&candidate)
+        // Fork builds never mix with upstream releases (e.g. a cached upstream
+        // `0.0.200` must not be offered to a `0.0.200-cn.1` build).
+        && is_fork_build(&current) == is_fork_build(&candidate)
 }
 
 fn release_version_for_channel(
@@ -542,6 +554,10 @@ pub fn compare_versions(a: &str, b: &str) -> std::cmp::Ordering {
 }
 
 pub fn is_newer_version(current: &str, latest: &str) -> bool {
+    // A fork build only upgrades to another fork build, never back to upstream.
+    if is_fork_build(current) && !is_fork_build(latest) {
+        return false;
+    }
     compare_versions(latest, current) == std::cmp::Ordering::Greater
 }
 
@@ -1572,6 +1588,14 @@ mod tests {
         assert_eq!(release_channel("0.0.181"), ReleaseChannel::Stable);
         assert_eq!(release_channel("0.0.200-cn.1"), ReleaseChannel::Stable);
         assert!(same_release_channel("0.0.200-cn.1", "0.0.201-cn.1"));
+        assert!(is_fork_build("v0.0.200-cn.1"));
+        assert!(!is_fork_build("0.0.200"));
+        assert!(!same_release_channel("0.0.200-cn.1", "0.0.200"));
+        assert!(!same_release_channel("0.0.200", "0.0.201-cn.1"));
+        assert!(!is_newer_version("0.0.200-cn.1", "0.0.200"));
+        assert!(!is_newer_version("0.0.200-cn.1", "0.0.201"));
+        assert!(is_newer_version("0.0.200-cn.1", "0.0.200-cn.2"));
+        assert!(is_newer_version("0.0.200-cn.2", "0.0.201-cn.1"));
         assert_eq!(
             pick_latest_bifrost_release(vec![
                 release("v0.0.200-cn.1", false, false),
