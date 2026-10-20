@@ -1,11 +1,11 @@
 {
-  "name": "@bifrost-proxy/bifrost-win32-x64",
+  "name": "@bytedance-dev/bifrost-win32-x64",
   "version": "0.0.0",
   "description": "Bifrost CLI binary for Windows x64",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bifrost-proxy/bifrost"
+    "url": "https://github.com/lukecc00/bifrost_cn"
   },
   "keywords": [
     "proxy",
@@ -33,5 +33,9 @@
   "files": [
     "bin/bifrost.exe",
     "README.md"
-  ]
+  ],
+  "publishConfig": {
+    "registry": "https://bnpm.byted.org",
+    "access": "restricted"
+  }
 }

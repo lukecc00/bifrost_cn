@@ -1,11 +1,11 @@
 {
-  "name": "@bifrost-proxy/bifrost-linux-arm",
+  "name": "@bytedance-dev/bifrost-linux-arm",
   "version": "0.0.0",
   "description": "Bifrost CLI binary for Linux ARM",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bifrost-proxy/bifrost"
+    "url": "https://github.com/lukecc00/bifrost_cn"
   },
   "keywords": [
     "proxy",
@@ -36,5 +36,9 @@
   "files": [
     "bin/bifrost",
     "README.md"
-  ]
+  ],
+  "publishConfig": {
+    "registry": "https://bnpm.byted.org",
+    "access": "restricted"
+  }
 }

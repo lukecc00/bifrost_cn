@@ -8,13 +8,13 @@ const {
 test("detects pnpm global and content-addressed layouts", () => {
   assert.equal(
     detectPackageManager(
-      "/Users/test/Library/pnpm/global/5/.pnpm/@bifrost-proxy+bifrost@1.2.3/node_modules/@bifrost-proxy/bifrost/bin/bifrost"
+      "/Users/test/Library/pnpm/global/5/.pnpm/@bytedance-dev+bifrost@1.2.3/node_modules/@bytedance-dev/bifrost/bin/bifrost"
     ),
     "pnpm"
   );
   assert.equal(
     detectPackageManager(
-      "C:\\Users\\test\\AppData\\Local\\pnpm\\global\\5\\node_modules\\@bifrost-proxy\\bifrost\\bin\\bifrost"
+      "C:\\Users\\test\\AppData\\Local\\pnpm\\global\\5\\node_modules\\@bytedance-dev\\bifrost\\bin\\bifrost"
     ),
     "pnpm"
   );
@@ -23,7 +23,7 @@ test("detects pnpm global and content-addressed layouts", () => {
 test("defaults npm package layouts to npm", () => {
   assert.equal(
     detectPackageManager(
-      "/usr/local/lib/node_modules/@bifrost-proxy/bifrost/bin/bifrost"
+      "/usr/local/lib/node_modules/@bytedance-dev/bifrost/bin/bifrost"
     ),
     "npm"
   );
@@ -32,7 +32,7 @@ test("defaults npm package layouts to npm", () => {
 test("builds a child environment that overrides stale source hints", () => {
   assert.deepEqual(
     buildChildEnvironment(
-      "/tmp/.pnpm/node_modules/@bifrost-proxy/bifrost/bin/bifrost",
+      "/tmp/.pnpm/node_modules/@bytedance-dev/bifrost/bin/bifrost",
       { KEEP_ME: "yes", BIFROST_CLI_INSTALL_SOURCE: "npm" }
     ),
     { KEEP_ME: "yes", BIFROST_CLI_INSTALL_SOURCE: "pnpm" }
