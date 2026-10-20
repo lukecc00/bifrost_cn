@@ -54,7 +54,7 @@ jobs:
           if [[ "${{ github.event_name }}" == "push" ]]; then
             TAG="${GITHUB_REF#refs/tags/}"
             VERSION="${TAG#v}"
-            IS_PRERELEASE=$([[ "$TAG" =~ (alpha|beta|rc) ]] && echo "true" || echo "false")
+            IS_PRERELEASE=$([[ "$TAG" =~ (alpha|beta|rc|cn) ]] && echo "true" || echo "false")
           else
             LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
             LATEST_VERSION="${LATEST_TAG#v}"
@@ -318,6 +318,9 @@ jobs:
   build-desktop:
     name: Build Desktop (${{ matrix.target }})
     needs: prepare
+    # Desktop bundles, Homebrew and npmjs publishing are upstream-only; the
+    # lukecc00/bifrost_cn fork ships the CLI to bnpm via scripts/npm-publish.mjs.
+    if: github.repository == 'bifrost-proxy/bifrost'
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -531,6 +534,9 @@ jobs:
   release:
     name: Create Release
     needs: [prepare, build-cli, build-desktop]
+    if: >-
+      ${{ !cancelled() && needs.build-cli.result == 'success' &&
+      (needs.build-desktop.result == 'success' || needs.build-desktop.result == 'skipped') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -680,7 +686,7 @@ jobs:
   update-homebrew:
     name: Update Homebrew Formula
     needs: [prepare, release, build-desktop]
-    if: needs.prepare.outputs.is_prerelease != 'true'
+    if: github.repository == 'bifrost-proxy/bifrost' && needs.prepare.outputs.is_prerelease != 'true'
     runs-on: ubuntu-latest
     env:
       MAX_VERSIONED_FORMULAS: 5
@@ -828,6 +834,7 @@ jobs:
   publish-npm:
     name: Publish npm Packages
     needs: [prepare, build-cli, release]
+    if: github.repository == 'bifrost-proxy/bifrost'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

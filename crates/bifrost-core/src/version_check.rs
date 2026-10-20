@@ -3,16 +3,16 @@ use serde::{Deserialize, Serialize};
 use tracing::debug;
 
 pub const GITHUB_RELEASES_LATEST_URL: &str =
-    "https://github.com/bifrost-proxy/bifrost/releases/latest";
+    "https://github.com/lukecc00/bifrost_cn/releases/latest";
 pub const GITHUB_RELEASES_API_URL: &str =
-    "https://api.github.com/repos/bifrost-proxy/bifrost/releases/latest";
+    "https://api.github.com/repos/lukecc00/bifrost_cn/releases/latest";
 pub const GITHUB_RELEASES_API_LIST_URL: &str =
-    "https://api.github.com/repos/bifrost-proxy/bifrost/releases";
-pub const GITHUB_RELEASES_HTML_URL: &str = "https://github.com/bifrost-proxy/bifrost/releases";
+    "https://api.github.com/repos/lukecc00/bifrost_cn/releases";
+pub const GITHUB_RELEASES_HTML_URL: &str = "https://github.com/lukecc00/bifrost_cn/releases";
 const GITHUB_RELEASE_API_URLS: (&str, &str) =
     (GITHUB_RELEASES_API_URL, GITHUB_RELEASES_API_LIST_URL);
-pub const GITHUB_TAGS_API_URL: &str = "https://api.github.com/repos/bifrost-proxy/bifrost/tags";
-pub const GITHUB_RELEASE_URL: &str = "https://github.com/bifrost-proxy/bifrost/releases/tag";
+pub const GITHUB_TAGS_API_URL: &str = "https://api.github.com/repos/lukecc00/bifrost_cn/tags";
+pub const GITHUB_RELEASE_URL: &str = "https://github.com/lukecc00/bifrost_cn/releases/tag";
 pub const REQUEST_TIMEOUT_SECS: u64 = 10;
 const HIGHLIGHTS_TIMEOUT_SECS: u64 = 5;
 pub const MAX_RETRIES: u32 = 2;
@@ -256,7 +256,7 @@ fn github_releases_html_page_url_from(base_url: &str, page: usize) -> String {
 }
 
 fn release_versions_from_html(html: &str) -> Vec<String> {
-    const RELEASE_TAG_MARKER: &str = "/bifrost-proxy/bifrost/releases/tag/";
+    const RELEASE_TAG_MARKER: &str = "/lukecc00/bifrost_cn/releases/tag/";
     let mut versions = Vec::new();
     let mut remaining = html;
     while let Some(offset) = remaining.find(RELEASE_TAG_MARKER) {
@@ -472,7 +472,7 @@ pub fn make_release_tag(version: &str) -> String {
 
 pub fn release_api_url_for_tag(tag: &str) -> String {
     format!(
-        "https://api.github.com/repos/bifrost-proxy/bifrost/releases/tags/{}",
+        "https://api.github.com/repos/lukecc00/bifrost_cn/releases/tags/{}",
         tag
     )
 }
@@ -1484,20 +1484,20 @@ mod tests {
     fn test_extract_version_from_redirect_url() {
         assert_eq!(
             extract_version_from_redirect_url(
-                "https://github.com/bifrost-proxy/bifrost/releases/tag/v0.0.53-beta"
+                "https://github.com/lukecc00/bifrost_cn/releases/tag/v0.0.53-beta"
             )
             .unwrap(),
             "0.0.53-beta"
         );
         assert_eq!(
             extract_version_from_redirect_url(
-                "https://github.com/bifrost-proxy/bifrost/releases/tag/v1.0.0"
+                "https://github.com/lukecc00/bifrost_cn/releases/tag/v1.0.0"
             )
             .unwrap(),
             "1.0.0"
         );
         assert!(extract_version_from_redirect_url(
-            "https://github.com/bifrost-proxy/bifrost/releases/tag/moss-runtime-v1.0.0"
+            "https://github.com/lukecc00/bifrost_cn/releases/tag/moss-runtime-v1.0.0"
         )
         .is_err());
         assert!(extract_version_from_redirect_url("https://github.com/").is_err());
@@ -1779,12 +1779,12 @@ mod tests {
     #[test]
     fn releases_html_parser_selects_the_latest_matching_prerelease_channel() {
         let html = r#"
-            <a href="/bifrost-proxy/bifrost/releases/tag/v0.0.181-alpha.9">alpha 9</a>
-            <a href="/bifrost-proxy/bifrost/releases/tag/v0.0.181-alpha.9">duplicate</a>
-            <a href="/bifrost-proxy/bifrost/releases/tag/v0.0.181-alpha.10">alpha 10</a>
-            <a href="/bifrost-proxy/bifrost/releases/tag/v0.0.182-beta.1">beta</a>
-            <a href="/bifrost-proxy/bifrost/releases/tag/v0.0.182">stable</a>
-            <a href="/bifrost-proxy/bifrost/releases/tag/not-a-bifrost-tag">invalid</a>
+            <a href="/lukecc00/bifrost_cn/releases/tag/v0.0.181-alpha.9">alpha 9</a>
+            <a href="/lukecc00/bifrost_cn/releases/tag/v0.0.181-alpha.9">duplicate</a>
+            <a href="/lukecc00/bifrost_cn/releases/tag/v0.0.181-alpha.10">alpha 10</a>
+            <a href="/lukecc00/bifrost_cn/releases/tag/v0.0.182-beta.1">beta</a>
+            <a href="/lukecc00/bifrost_cn/releases/tag/v0.0.182">stable</a>
+            <a href="/lukecc00/bifrost_cn/releases/tag/not-a-bifrost-tag">invalid</a>
             <a href="/someone/else/releases/tag/v99.0.0-alpha.1">unrelated</a>
         "#;
 
@@ -1810,9 +1810,9 @@ mod tests {
     #[test]
     fn prerelease_sync_falls_back_to_public_html_when_api_is_rate_limited() {
         let html = r#"
-            <a href="/bifrost-proxy/bifrost/releases/tag/v0.0.181-alpha.8">alpha 8</a>
-            <a href="/bifrost-proxy/bifrost/releases/tag/v0.0.181-alpha.9">alpha 9</a>
-            <a href="/bifrost-proxy/bifrost/releases/tag/v0.0.181-beta.10">beta</a>
+            <a href="/lukecc00/bifrost_cn/releases/tag/v0.0.181-alpha.8">alpha 8</a>
+            <a href="/lukecc00/bifrost_cn/releases/tag/v0.0.181-alpha.9">alpha 9</a>
+            <a href="/lukecc00/bifrost_cn/releases/tag/v0.0.181-beta.10">beta</a>
         "#;
         let base_url = spawn_release_page_server(vec![
             (403, "rate limited".to_string()),
@@ -1835,8 +1835,8 @@ mod tests {
         let client = crate::github_blocking_reqwest_client_builder()
             .build()
             .unwrap();
-        let beta_only = r#"<a href="/bifrost-proxy/bifrost/releases/tag/v0.0.181-beta.1">beta</a>"#;
-        let alpha = r#"<a href="/bifrost-proxy/bifrost/releases/tag/v0.0.181-alpha.11">alpha</a>"#;
+        let beta_only = r#"<a href="/lukecc00/bifrost_cn/releases/tag/v0.0.181-beta.1">beta</a>"#;
+        let alpha = r#"<a href="/lukecc00/bifrost_cn/releases/tag/v0.0.181-alpha.11">alpha</a>"#;
         let paginated =
             spawn_release_page_server(vec![(200, beta_only.to_string()), (200, alpha.to_string())]);
         assert_eq!(
@@ -1932,8 +1932,8 @@ mod tests {
     #[tokio::test]
     async fn prerelease_async_falls_back_to_public_html_when_api_is_rate_limited() {
         let html = r#"
-            <a href="/bifrost-proxy/bifrost/releases/tag/v0.0.181-alpha.9">alpha 9</a>
-            <a href="/bifrost-proxy/bifrost/releases/tag/v0.0.182-rc.1">rc</a>
+            <a href="/lukecc00/bifrost_cn/releases/tag/v0.0.181-alpha.9">alpha 9</a>
+            <a href="/lukecc00/bifrost_cn/releases/tag/v0.0.182-rc.1">rc</a>
         "#;
         let base_url = spawn_release_page_server(vec![
             (403, "rate limited".to_string()),
@@ -1953,8 +1953,8 @@ mod tests {
     #[tokio::test]
     async fn releases_html_async_fallback_covers_pagination_and_error_exits() {
         let client = crate::github_reqwest_client_builder().build().unwrap();
-        let beta_only = r#"<a href="/bifrost-proxy/bifrost/releases/tag/v0.0.181-beta.1">beta</a>"#;
-        let alpha = r#"<a href="/bifrost-proxy/bifrost/releases/tag/v0.0.181-alpha.12">alpha</a>"#;
+        let beta_only = r#"<a href="/lukecc00/bifrost_cn/releases/tag/v0.0.181-beta.1">beta</a>"#;
+        let alpha = r#"<a href="/lukecc00/bifrost_cn/releases/tag/v0.0.181-alpha.12">alpha</a>"#;
         let paginated =
             spawn_release_page_server(vec![(200, beta_only.to_string()), (200, alpha.to_string())]);
         assert_eq!(
@@ -2003,15 +2003,15 @@ mod tests {
     fn test_github_releases_api_list_url_is_explicitly_paginated_without_a_fixed_cap() {
         assert_eq!(
             github_releases_api_list_url(0),
-            "https://api.github.com/repos/bifrost-proxy/bifrost/releases?per_page=100&page=1"
+            "https://api.github.com/repos/lukecc00/bifrost_cn/releases?per_page=100&page=1"
         );
         assert_eq!(
             github_releases_api_list_url(1),
-            "https://api.github.com/repos/bifrost-proxy/bifrost/releases?per_page=100&page=1"
+            "https://api.github.com/repos/lukecc00/bifrost_cn/releases?per_page=100&page=1"
         );
         assert_eq!(
             github_releases_api_list_url(10_001),
-            "https://api.github.com/repos/bifrost-proxy/bifrost/releases?per_page=100&page=10001"
+            "https://api.github.com/repos/lukecc00/bifrost_cn/releases?per_page=100&page=10001"
         );
     }
 
@@ -2471,7 +2471,7 @@ without proper structure
 
     #[test]
     fn test_parse_release_highlights_bugfixes_only() {
-        let body = "## What's Changed\n\n### 🐛 Bug Fixes\n- fix(tls): 更新依赖版本并重构证书生成逻辑 (544f003)\n\n### 📝 Other Changes\n- chore: bump version to 0.0.4-alpha (7c12d34)\n- ci(workflow): 改进 Homebrew 公式更新流程 (e2c148a)\n- ci(workflows): 添加对 Windows ARM64 架构的支持 (abe47fa)\n\n**Full Changelog**: https://github.com/bifrost-proxy/bifrost/compare/v0.0.3-alpha...v0.0.4-alpha\n";
+        let body = "## What's Changed\n\n### 🐛 Bug Fixes\n- fix(tls): 更新依赖版本并重构证书生成逻辑 (544f003)\n\n### 📝 Other Changes\n- chore: bump version to 0.0.4-alpha (7c12d34)\n- ci(workflow): 改进 Homebrew 公式更新流程 (e2c148a)\n- ci(workflows): 添加对 Windows ARM64 架构的支持 (abe47fa)\n\n**Full Changelog**: https://github.com/lukecc00/bifrost_cn/compare/v0.0.3-alpha...v0.0.4-alpha\n";
         let highlights = parse_release_highlights(Some(body));
         assert_eq!(
             highlights.len(),
@@ -2602,11 +2602,11 @@ without proper structure
     fn test_release_page_url() {
         assert_eq!(
             release_page_url("0.0.53-beta"),
-            "https://github.com/bifrost-proxy/bifrost/releases/tag/v0.0.53-beta"
+            "https://github.com/lukecc00/bifrost_cn/releases/tag/v0.0.53-beta"
         );
         assert_eq!(
             release_page_url("1.0.0"),
-            "https://github.com/bifrost-proxy/bifrost/releases/tag/v1.0.0"
+            "https://github.com/lukecc00/bifrost_cn/releases/tag/v1.0.0"
         );
     }
 
@@ -2654,24 +2654,24 @@ without proper structure
         // Trailing slash trimmed.
         assert_eq!(
             extract_version_from_redirect_url(
-                "https://github.com/bifrost-proxy/bifrost/releases/tag/v2.3.4/"
+                "https://github.com/lukecc00/bifrost_cn/releases/tag/v2.3.4/"
             )
             .unwrap(),
             "2.3.4"
         );
         // Bifrost releases always require the v-prefix.
         assert!(extract_version_from_redirect_url(
-            "https://github.com/bifrost-proxy/bifrost/releases/tag/2.3.4"
+            "https://github.com/lukecc00/bifrost_cn/releases/tag/2.3.4"
         )
         .is_err());
         // Independent resource releases must never become upgrade targets.
         assert!(extract_version_from_redirect_url(
-            "https://github.com/bifrost-proxy/bifrost/releases/tag/moss-runtime-v1.0.0"
+            "https://github.com/lukecc00/bifrost_cn/releases/tag/moss-runtime-v1.0.0"
         )
         .is_err());
         // Empty tag -> Parse error.
         assert!(extract_version_from_redirect_url(
-            "https://github.com/bifrost-proxy/bifrost/releases/tag/"
+            "https://github.com/lukecc00/bifrost_cn/releases/tag/"
         )
         .is_err());
         // No /tag/ segment -> Parse error.
@@ -2694,7 +2694,7 @@ without proper structure
     fn release_api_url_and_strip_prefix() {
         assert_eq!(
             release_api_url_for_tag("v1.2.3"),
-            "https://api.github.com/repos/bifrost-proxy/bifrost/releases/tags/v1.2.3"
+            "https://api.github.com/repos/lukecc00/bifrost_cn/releases/tags/v1.2.3"
         );
         assert_eq!(strip_tag_prefix("v1.2.3"), "1.2.3");
         assert_eq!(strip_tag_prefix("1.2.3"), "1.2.3");
